@@ -20,6 +20,23 @@ const customLevelsOptions = {
 }
 winston.addColors(customLevelsOptions.colors)
 
+const requestLoggerFormat = winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ message, timestamp }) => {
+        const { ip, method, path } = message
+        if (ip && method && path)
+            return `${ip} - [${timestamp}] ${method} ${path}`
+        else
+            return `[${timestamp}] ${message}`
+    })
+)
+
+const errorLoggerFormat = winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ message, timestamp }) => {
+        return `[${timestamp}] ${message}`
+    })
+)
 
 const devLogger = winston.createLogger({
     levels: customLevelsOptions.levels,
@@ -37,17 +54,22 @@ const devLogger = winston.createLogger({
 const prodLogger = winston.createLogger({
     levels: customLevelsOptions.levels,
     transports: [
-        new winston.transports.Console({
+        // new winston.transports.Console({
+        //     level: 'info',
+        //     format: winston.format.combine(
+        //         winston.format.colorize({ colors: customLevelsOptions.colors }),
+        //         winston.format.simple()
+        //     )
+        // }),
+        new winston.transports.File({
             level: 'info',
-            format: winston.format.combine(
-                winston.format.colorize({ colors: customLevelsOptions.colors }),
-                winston.format.simple()
-            )
+            filename: `${__dirname}/../logs/access.log`,
+            format: requestLoggerFormat
         }),
         new winston.transports.File({
-            filename: 'errors.log',
+            filename: `${__dirname}/../logs/errors.log`,
             level: 'error',
-            format: winston.format.simple()
+            format: errorLoggerFormat
         })
     ]
 })
@@ -61,7 +83,15 @@ const logger = process.env.NODE_ENV == 'production'
  */
 const useLogger = (req, res, next) => {
     req.logger = logger
+
     req.logger.http(`Request at endpoint: ${req.url}`)
+
+    req.logger.info({
+        ip: req.ip,
+        method: req.method.toUpperCase(),
+        path: req.path
+    })
+    
     next()
 }
 

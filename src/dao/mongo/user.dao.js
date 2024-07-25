@@ -12,6 +12,10 @@ class UserDAO {
     async login(email) {
         try {
             const user = await userModel.findOne(email)
+            if (user) {
+                user.last_connection = Date.now()
+                await this.updateUserLastConnection(user.email, user.last_connection)
+            }
             return user?.toObject() ?? null
         }
         catch (err) {
@@ -97,6 +101,17 @@ class UserDAO {
         }
     }
 
+    async updateUserLastConnection(email, date) {
+        try {
+            const updatedUser = await userModel.updateOne(email, { $set: { last_connection: date } })
+            //return updatedUser.toObject()
+        }
+        catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
     async changeRole(userId) {
         try {
             const user = await this.getUserById(userId)
@@ -130,6 +145,12 @@ class UserDAO {
             console.error(err)
             return null
         }
+    }
+
+    async logout(user) {
+        if (user)
+            user.last_connection = Date.now()
+        await this.updateUserLastConnection(user.email, user.last_connection)
     }
 
 }

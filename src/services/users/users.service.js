@@ -1,14 +1,13 @@
-
 const config = require('../../config/config')
 const { ADMIN } = require('../../config/policies.constants')
 const { isValidPassword } = require('../../utils/hashing')
 
-class JwtServices {
+class UsersServices {
 
     constructor(dao) {
         this.dao = dao
-    }
-
+    }    
+    
     async login(email, password) {
         if (!email || !password) {
             // return res.status(400).json({ error: 'Credenciales inválidas!' })
@@ -27,7 +26,8 @@ class JwtServices {
                 password: password,
                 age: 47,
                 cart: null,
-                _id: "dflksgd8sfg7sd890fg"
+                _id: "dflksgd8sfg7sd890fg",
+                last_connection: Date.now()
             }
         }
         else {
@@ -48,6 +48,10 @@ class JwtServices {
         return user
     }
 
+    async changeRole(userId) { 
+        return await this.dao.changeRole(userId)
+    }
+    
 }
 
-module.exports = JwtServices
+module.exports = UsersServices

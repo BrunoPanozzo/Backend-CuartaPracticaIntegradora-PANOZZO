@@ -93,7 +93,8 @@ const initializeStrategy = () => {
                     password: password,
                     age: 47,
                     _id: "dflksgd8sfg7sd890fg",
-                    cart: null
+                    cart: null,
+                    last_connection: Date.now(),
                 }
             }
             else {
@@ -179,7 +180,8 @@ const initializeStrategy = () => {
                 age: 30,
                 email: profile._json.email,
                 password: '',
-                cart: newCart
+                cart: newCart,
+                last_connection: Date.now(),
             }
             //const result = await userModel.create(newUser)
             const result = await userDAO.saveUser(newUser)
@@ -213,7 +215,8 @@ const initializeStrategy = () => {
                 age: 30,
                 email: email,
                 password: '',
-                cart: newCart
+                cart: newCart,
+                last_connection: Date.now(),
             }
             //const result = await userModel.create(newUser)
             const result = await userDAO.saveUser(newUser)

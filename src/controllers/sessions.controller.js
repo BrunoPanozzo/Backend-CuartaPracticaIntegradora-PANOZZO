@@ -27,7 +27,7 @@ class SessionsController {
                     message: 'Error trying to login a user',
                     code: ErrorCodes.INVALID_CREDENTIALS
                 })
-            }
+            }            
             req.session.user = new UserDTO(req.user)
 
             // no es necesario validar el login aquí, ya lo hace passport!
@@ -174,11 +174,13 @@ class SessionsController {
         }
     }
 
-    logout(req, res) {
+    async logout(req, res) {
         try {
+            await this.sessionsService.logout(req.session.user)
+            const userId = req.session.user._id
             req.session.destroy(_ => {
                 //res.redirect('/')
-                res.sendSuccess(req.user._id)
+                res.sendSuccess(userId)
             })
         }
         catch (err) {
@@ -208,24 +210,6 @@ class SessionsController {
             //return res.status(500).json({ message: err.message })
             return res.sendServerError(err)
         }
-    }
-
-    async changeRole(req, res) {
-        try {
-            const userId = req.params.uid
-            const user = await this.sessionsService.changeRole(userId)
-            if (!user) {
-                return user === false
-                    ? res.sendNotFoundError(`El usuario con código '${userId}' no existe.`)
-                    : res.sendServerError(`No se pudo cambiar el rol del usuario '${userId}'`)
-            }
-
-            res.sendSuccess(`El usuario '${userId}' cambió su rol.`)
-        }
-        catch (err) {
-            res.sendServerError(err)
-        }
-
     }
 
 }

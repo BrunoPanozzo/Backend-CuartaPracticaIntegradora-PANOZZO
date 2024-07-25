@@ -12,10 +12,6 @@ class SessionsServices {
     async validarPasswordsRepetidos(email, password) {
         return await this.dao.validarPasswordsRepetidos(email, password)
     }
-
-    async changeRole(userId) {
-        return await this.dao.changeRole(userId)
-    }
     
     async getUserById(userId)   {
         return await this.dao.getUserById(userId)
@@ -40,6 +36,10 @@ class SessionsServices {
     
     async getUserByCartId(cartId)   {
         return await this.dao.getUserByCartId(cartId)
+    }
+
+    async logout(user)   {
+        return await this.dao.logout(user)
     }
 }
 

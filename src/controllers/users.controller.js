@@ -1,14 +1,14 @@
+const UsersServices = require('../services/users/users.service')
 const { generateToken } = require('../utils/jwt')
-const JwtServices = require('../services/users/jwt.service')
 
-const { UserDAO } = require('../dao/factory')
+const { UserDAO } = require("../dao/factory")
 const { UserDTO } = require('../dao/dto/user.dto')
 
-class JwtController {
-    
+class UsersController {
+
     constructor() {
         const userDAO = UserDAO()
-        this.service = new JwtServices(userDAO)     
+        this.usersService = new UsersServices(userDAO)
     }
 
     #handleError(res, err) {
@@ -34,7 +34,7 @@ class JwtController {
         try {
             const { email, password } = req.body
 
-            const user = await this.service.login(email, password)
+            const user = await this.usersService.login(email, password)
 
             const credentials = { id: user._id.toString(), email: user.email, rol: user.rol }
             const accessToken = generateToken(credentials)
@@ -68,6 +68,23 @@ class JwtController {
         res.sendSuccess(new UserDTO(req.user))
     }
 
+    async changeRole(req, res) {
+        try {
+            const userId = req.params.uid
+            const user = await this.usersService.changeRole(userId)
+            if (!user) {
+                return user === false
+                    ? res.sendNotFoundError(`El usuario con código '${userId}' no existe.`)
+                    : res.sendServerError(`No se pudo cambiar el rol del usuario '${userId}'`)
+            }
+
+            res.sendSuccess(`El usuario '${userId}' cambió su rol.`)
+        }
+        catch (err) {
+            res.sendServerError(err)
+        }
+    }
+
 }
 
-module.exports = JwtController
+module.exports = UsersController
