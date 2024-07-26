@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
 //             <div class="card-header">${product.category}</div>
 //             <div class="card-body">
 //                 <h5 class="card-title">${product.title}</h5>
-//                 <img src="/images/productos/${product.thumbnail}" alt=${product.title} width="270" />
+//                 <img src="/images/products/${product.thumbnail}" alt=${product.title} width="270" />
 //                 <p class="card-text item-precio">$ ${product.price}</p>
 //                 <p class="card-text item-stock">Stock Disponible: ${product.stock}</p>
 //                 <p class="card-text item-descripcion">${product.description}</p>

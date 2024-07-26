@@ -5,6 +5,9 @@ const { PUBLIC, USER, ADMIN, SUPER_ADMIN, USER_PREMIUM } = require('../config/po
 
 const { verifyToken } = require('../utils/jwt')
 const passportMiddleware = require('../middlewares/passport.middleware')
+const uploader = require('../middlewares/uploadFile.middleware')
+
+const { userWithValidCertificates } = require('../middlewares/user.middleware')
 
 const withController = callback => {
     return (req, res) => {
@@ -15,14 +18,29 @@ const withController = callback => {
 
 class UserRouter extends BaseRouter {
     init() {
-        
+
         this.post('/login', [PUBLIC], withController((controller, req, res) => controller.login(req, res)))
 
         this.get('/private', [ADMIN, SUPER_ADMIN], verifyToken, withController((controller, req, res) => controller.private(req, res)))
 
         this.get('/current', [USER, ADMIN, SUPER_ADMIN], passportMiddleware('jwt') /*passport.authenticate('jwt', {session: false})*/, withController((controller, req, res) => controller.current(req, res)))
-        
-        this.put('/premium/:uid', [USER, USER_PREMIUM, ADMIN, SUPER_ADMIN], withController((controller, req, res) => controller.changeRole(req, res)))
+
+        this.put('/premium/:uid', [USER, USER_PREMIUM, ADMIN, SUPER_ADMIN], userWithValidCertificates, withController((controller, req, res) => controller.changeRole(req, res)))
+
+        this.post('/:uid/documents', [USER, USER_PREMIUM, ADMIN, SUPER_ADMIN], uploader.fields([
+            {
+                name: 'profile',
+                maxCount: 1
+            },
+            {
+                name: 'product',
+                maxCount: 1
+            },
+            {
+                name: 'comprobante',
+                maxCount: 1
+            }
+        ]), withController((controller, req, res) => controller.addFiles(req, res)))
 
     }
 }

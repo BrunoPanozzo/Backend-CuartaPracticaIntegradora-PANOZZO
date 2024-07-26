@@ -14,7 +14,7 @@ class UserDAO {
             const user = await userModel.findOne(email)
             if (user) {
                 user.last_connection = Date.now()
-                await this.updateUserLastConnection(user.email, user.last_connection)
+                await this.updateUserLastConnection({ email: user.email }, user.last_connection)
             }
             return user?.toObject() ?? null
         }
@@ -125,7 +125,7 @@ class UserDAO {
                     return false
 
                 //si llegue a este punto, cambió el rol
-                await userModel.updateOne( {_id: userId}, { $set: { rol: user.rol } })
+                await userModel.updateOne({ _id: userId }, { $set: { rol: user.rol } })
                 return true
             }
             else
@@ -148,9 +148,28 @@ class UserDAO {
     }
 
     async logout(user) {
-        if (user)
-            user.last_connection = Date.now()
-        await this.updateUserLastConnection(user.email, user.last_connection)
+        try {
+            if (user)
+                user.last_connection = Date.now()
+            await this.updateUserLastConnection({ email: user.email }, user.last_connection)
+        }
+        catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async addFile(userId, document) {
+        try {
+            const user = await this.getUserById(userId)
+            user.documents.push(document)
+            await userModel.updateOne({ _id: userId }, { $set: { documents: user.documents } })
+            return true
+        }
+        catch (err) {
+            console.error(err)
+            return false
+        }
     }
 
 }

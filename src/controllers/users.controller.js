@@ -25,7 +25,7 @@ class UsersController {
         if (err.message === 'invalid password') {
             res.sendUnauthorizedError(err)
         }
-        
+
         //return res.status(500).json({ error: err })
         return res.sendServerError(err)
     }
@@ -79,6 +79,22 @@ class UsersController {
             }
 
             res.sendSuccess(`El usuario '${userId}' cambió su rol.`)
+        }
+        catch (err) {
+            res.sendServerError(err)
+        }
+    }
+
+    async addFiles(req, res) {
+        try {
+            const userId = req.params.uid
+            const files = req.files
+            if (!files) //si no existe, significa que hubo un error al subir los archivos
+                res.sendUserError(`No se pudieron subir los archivos para el usuario '${userId}'.`)
+            const result = await this.usersService.addFiles(userId, files)
+            result
+                ? res.sendSuccess(`Se cargaron nuevos archivos para el usuario '${userId}'.`)
+                : res.sendServerError(`No se pudieron subir los archivos para el usuario '${userId}'.`)
         }
         catch (err) {
             res.sendServerError(err)

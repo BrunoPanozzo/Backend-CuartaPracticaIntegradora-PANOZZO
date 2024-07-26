@@ -1,6 +1,6 @@
 const BaseRouter = require('./router')
 
-const { userIsLoggedIn, userIsNotLoggedIn, userIsAdmin, userIsNotAdmin, userIsAdminOrPremium } = require('../middlewares/auth.middleware')
+const { userIsLoggedIn, userIsNotLoggedIn, userIsAdmin, userIsNotAdmin, userIsAdminOrPremium } = require('../middlewares/user.middleware')
 
 const ViewsController = require('../controllers/views.controller')
 const { PUBLIC, USER, ADMIN, SUPER_ADMIN } = require('../config/policies.constants')

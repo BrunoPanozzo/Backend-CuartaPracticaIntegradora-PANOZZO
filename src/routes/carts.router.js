@@ -5,7 +5,7 @@ const { validateProduct } = require('../middlewares/product.middleware')
 
 const CartsController = require('../controllers/carts.controller')
 const { PUBLIC, USER } = require('../config/policies.constants')
-const { userIsNotAdmin, userIsLoggedIn } = require('../middlewares/auth.middleware')
+const { userIsNotAdmin, userIsLoggedIn } = require('../middlewares/user.middleware')
 
 const withController = callback => {
     return (req, res) => {

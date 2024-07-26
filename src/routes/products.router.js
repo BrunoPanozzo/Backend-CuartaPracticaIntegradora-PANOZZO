@@ -4,7 +4,7 @@ const { validateNewProduct, validateUpdateProduct, validateProduct } = require('
 
 const ProducsController = require('../controllers/products.controller')
 const { PUBLIC, USER, ADMIN, SUPER_ADMIN, USER_PREMIUM } = require('../config/policies.constants')
-const { userIsAdmin, userIsLoggedIn, userIsAdminOrPremium } = require('../middlewares/auth.middleware')
+const { userIsAdmin, userIsLoggedIn, userIsAdminOrPremium } = require('../middlewares/user.middleware')
 
 const withController = callback => {
     return (req, res) => {
